@@ -1,0 +1,14 @@
+.loading {
+	padding-top: 25px;
+	padding-bottom: 25px;
+}
+
+.loading img {
+	display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.display-in-tree {
+	cursor: pointer;
+}
