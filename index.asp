@@ -38,6 +38,7 @@
 	</script>
 	
 	<script id="template-search-options-content-class" type="text/x-handlebars-template" data-container="#search-options .form-horizontal" data-action="append">
+		{{#if contentclassguid}}
 		<div class="control-group">
 			<label class="control-label">Content Class</label>
 			<div class="controls">
@@ -46,6 +47,7 @@
 				</div>
 			</div>
 		</div>
+		{{/if}}
 	</script>
 	
 	<script id="template-search-option-last-modified-user" type="text/x-handlebars-template" data-container="#search-options .form-horizontal" data-action="append">
@@ -53,7 +55,7 @@
 			<label class="control-label">By User</label>
 			<div class="controls">
 				<div class="users">
-					<select>
+					<select multiple>
 						{{#each users}}
 							<option data-guid="{{guid}}">{{name}}</option>
 						{{/each}}
@@ -80,21 +82,29 @@
 			<div class="clearfix"></div>
 		</div>
 		<div class="well">
+			{{#if contentclassname}}
 			<div class="row-fluid">
 				<div class="span3"><strong>Content Class</strong></div>
 				<div class="span6">{{contentclassname}}</div>
 			</div>
+			{{/if}}
+			{{#if contentclassguid}}
 			<div class="row-fluid">
 				<div class="span3"><strong>Content Class Guid</strong></div>
 				<div class="span6">{{contentclassguid}}</div>
 			</div>
+			{{/if}}
 			<div class="row-fluid">
 				<div class="span3"><strong>Last Modified Date</strong></div>
 				<div class="span6">{{lastmodifieddate}}</div>
 			</div>
 			<div class="row-fluid">
-				<div class="span3"><strong>Last Modified User</strong></div>
-				<div class="span6">{{lastmodifieduser}}</div>
+				<div class="span3"><strong>Last Modified Users</strong></div>
+				<div class="span6">{{lastmodifiedusers}}</div>
+			</div>
+			<div class="row-fluid">
+				<div class="span3"><strong>Found results</strong></div>
+				<div class="span6">{{count}}</div>
 			</div>
 		</div>
 	</script>
@@ -104,14 +114,16 @@
 		<div class="alert row">
 			<div class="span5">
 				<div class="display-in-tree" data-guid="{{guid}}">
-					<span class="badge badge-info page-id">{{id}}</span> <span class="page-name">{{name}}</span>
+					<span class="badge badge-success page-id">{{id}}</span> <span class="page-name">{{name}}</span>
 				</div>
 			</div>
-			<div class="span3">
-				<span class="label label-info last-modified-date">{{lastmodifieddate}}</span>
-			</div>
-			<div class="span3">
-				<span class="label label-info last-modified-user">{{lastmodifieduser}}</span>
+			<div class="span4">
+				<div>
+					<span class="label label-inverse content-class-name">{{contentclassname}}</span>
+				</div>
+				<div>
+					<span class="label last-modified-user">{{lastmodifieduser}}</span> - <span class="label label-info last-modified-date">{{lastmodifieddate}}</span>
+				</div>
 			</div>
 		</div>
 		{{/each}}

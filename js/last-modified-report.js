@@ -18,10 +18,17 @@ function LastModifiedReport(RqlConnectorObj, ProjectGuid, ContentClassGuid){
 		var ContentClassName = $(SearchOptionsContainer).find('.content-class input').val();
 		var ContentClassGuid = $(SearchOptionsContainer).find('.content-class input').attr('data-guid');
 		var LastModifiedDate = $(SearchOptionsContainer).find('.date input').val();
-		var LastModifiedUserGuid = $(SearchOptionsContainer).find('.users :selected').attr('data-guid');
-		var LastModifiedUserName = $(SearchOptionsContainer).find('.users :selected').text();
 		
-		ThisClass.DisplayLastModifiedResults(ContentClassName, ContentClassGuid, LastModifiedDate, LastModifiedUserGuid, LastModifiedUserName);
+		var LastModifiedUserGuidsArray = [];
+		var LastModifiedUserNamesArray = [];
+		$(SearchOptionsContainer).find('.users :selected').each(function(){
+			if($(this).attr('data-guid')){
+				LastModifiedUserGuidsArray.push($(this).attr('data-guid'));
+				LastModifiedUserNamesArray.push($(this).text());
+			}
+		});
+		
+		ThisClass.DisplayLastModifiedResults(ContentClassName, ContentClassGuid, LastModifiedDate, LastModifiedUserGuidsArray, LastModifiedUserNamesArray);
 	});
 	
 	var SearchResultContainer = $(this.TemplateSearchResult).attr('data-container');
@@ -102,7 +109,7 @@ LastModifiedReport.prototype.GetLastModifiedDate = function(){
 	});
 }
 
-LastModifiedReport.prototype.DisplayLastModifiedResults = function(ContentClassName, ContentClassGuid, LastModifiedDate, LastModifiedUserGuid, LastModifiedUserName){
+LastModifiedReport.prototype.DisplayLastModifiedResults = function(ContentClassName, ContentClassGuid, LastModifiedDate, LastModifiedUserGuidsArray, LastModifiedUserNamesArray){
 	var ThisClass = this;
 	
 	var SearchOptionsContainer = $(this.TemplateSearchOptions).attr('data-container');
@@ -110,17 +117,25 @@ LastModifiedReport.prototype.DisplayLastModifiedResults = function(ContentClassN
 	
 	var RqlXml = '<PAGE action="xsearch" pagesize="-1" maxhits="-1" orderby="changedate"><SEARCHITEMS>';
 	
-	RqlXml += '<SEARCHITEM key="contentclassguid" value="' + ContentClassGuid + '" operator="eq"></SEARCHITEM>';
+	if(ContentClassGuid){
+		RqlXml += '<SEARCHITEM key="contentclassguid" value="' + ContentClassGuid + '" operator="eq"></SEARCHITEM>';
+	}
 	
 	if(LastModifiedDate){
 		RqlXml += '<SEARCHITEM key="changedate" value="' + this.ConvertToRedDotDate(new Date(LastModifiedDate)) + '" operator="le"></SEARCHITEM>';
 	}
 	
-	if(LastModifiedUserGuid){
-		RqlXml += '<SEARCHITEM key="changedby" value="list" operator="eq"><USERS><USER guid="' + LastModifiedUserGuid + '" /></USERS></SEARCHITEM>';
+	if(LastModifiedUserGuidsArray.length > 0){
+		RqlXml += '<SEARCHITEM key="changedby" value="list" operator="eq"><USERS>';
+		$.each(LastModifiedUserGuidsArray, function(index, LastModifiedUserGuid){
+			RqlXml += '<USER guid="' + LastModifiedUserGuid + '" />';
+		});
+		RqlXml += '</USERS></SEARCHITEM>';
 	}
 	
 	RqlXml += '</SEARCHITEMS></PAGE>';
+	
+	console.log(RqlXml);
 	
 	this.RqlConnectorObj.SendRql(RqlXml, false, function(data){
 		var ResultPages = [];
@@ -130,6 +145,7 @@ LastModifiedReport.prototype.DisplayLastModifiedResults = function(ContentClassN
 				id: $(this).attr('id'),
 				guid: $(this).attr('guid'),
 				name: $(this).attr('headline'),
+				contentclassname: $(this).find('CONTENTCLASS').attr("name"),
 				lastmodifieddate: ThisClass.FormatDateTime(ThisClass.ConvertFromRedDotDate($(this).find('CHANGE').attr('date'))),
 				lastmodifieduser: $(this).find('CHANGE USER').attr('name')
 			});
@@ -138,8 +154,9 @@ LastModifiedReport.prototype.DisplayLastModifiedResults = function(ContentClassN
 		var SearchResultOptionsObj = {
 			contentclassname: ContentClassName,
 			contentclassguid: ContentClassGuid,
+			count: $(data).find('PAGE').length,
 			lastmodifieddate: LastModifiedDate,
-			lastmodifieduser: LastModifiedUserName
+			lastmodifiedusers: LastModifiedUserNamesArray.join(',')
 		};
 		
 		ThisClass.UpdateArea(ThisClass.TemplateSearchResultOptions, SearchResultOptionsObj);
@@ -165,9 +182,10 @@ LastModifiedReport.prototype.CopyASCsvToClipboard = function(){
 	$(SearchResultContainer).find('.alert').each(function(){
 		var PageId = '"' + $(this).find('.page-id').text().replace(/"/g, '\"') + '"';
 		var PageName = '"' + $(this).find('.page-name').text().replace(/"/g, '\"') + '"';
+		var ContentClassName = '"' + $(this).find('.content-class-name').text().replace(/"/g, '\"') + '"';
 		var LastModifiedDate = '"' + $(this).find('.last-modified-date').text() + '"';
 		var LastModifiedUser = '"' + $(this).find('.last-modified-user').text() + '"';
-		var CSVRowArray = [PageId, PageName, LastModifiedDate, LastModifiedUser];
+		var CSVRowArray = [PageId, PageName, ContentClassName, LastModifiedDate, LastModifiedUser];
 		
 		CSV += CSVRowArray.join(',') + '\r\n';
 	});
