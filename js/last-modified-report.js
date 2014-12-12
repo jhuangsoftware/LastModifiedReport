@@ -219,7 +219,7 @@ LastModifiedReport.prototype.FormatDateTime = function(InputDateTime){
 	// format date time into MM/DD/YYYY TTTT
 	var RetDateTime = "";
 	
-	var Month = InputDateTime.getMonth();
+	var Month = InputDateTime.getMonth() + 1;
 	var Date = InputDateTime.getDate();
 	var Year = InputDateTime.getFullYear();
 	
