@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html>
 <head>
 	<meta http-equiv="expires" content="-1" />
 	<meta http-equiv="content-type" content="text/html; charset=utf-8" />
@@ -77,34 +78,36 @@
 	</script>
 	
 	<script id="template-search-result-options" type="text/x-handlebars-template" data-container="#results" data-action="replace">
-		<div class="well well-small">
-			<div class="btn btn-success copy-as-csv pull-right">Copy as CSV to Clipboard</div>
-			<div class="clearfix"></div>
-		</div>
-		<div class="well">
-			{{#if contentclassname}}
-			<div class="row-fluid">
-				<div class="span3"><strong>Content Class</strong></div>
-				<div class="span6">{{contentclassname}}</div>
+		<div class="row">
+			<div class="well well-small">
+				<div class="btn btn-success copy-as-csv pull-right">Copy as CSV to Clipboard</div>
+				<div class="clearfix"></div>
 			</div>
-			{{/if}}
-			{{#if contentclassguid}}
-			<div class="row-fluid">
-				<div class="span3"><strong>Content Class Guid</strong></div>
-				<div class="span6">{{contentclassguid}}</div>
-			</div>
-			{{/if}}
-			<div class="row-fluid">
-				<div class="span3"><strong>Last Modified Date</strong></div>
-				<div class="span6">{{lastmodifieddate}}</div>
-			</div>
-			<div class="row-fluid">
-				<div class="span3"><strong>Last Modified Users</strong></div>
-				<div class="span6">{{lastmodifiedusers}}</div>
-			</div>
-			<div class="row-fluid">
-				<div class="span3"><strong>Found results</strong></div>
-				<div class="span6">{{count}}</div>
+			<div class="well">
+				{{#if contentclassname}}
+				<div class="row-fluid">
+					<div class="span3"><strong>Content Class</strong></div>
+					<div class="span9">{{contentclassname}}</div>
+				</div>
+				{{/if}}
+				{{#if contentclassguid}}
+				<div class="row-fluid">
+					<div class="span3"><strong>Content Class Guid</strong></div>
+					<div class="span9">{{contentclassguid}}</div>
+				</div>
+				{{/if}}
+				<div class="row-fluid">
+					<div class="span3"><strong>Last Modified Date</strong></div>
+					<div class="span9">{{lastmodifieddate}}</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span3"><strong>Last Modified Users</strong></div>
+					<div class="span9">{{lastmodifiedusers}}</div>
+				</div>
+				<div class="row-fluid">
+					<div class="span3"><strong>Found results</strong></div>
+					<div class="span9">{{count}}</div>
+				</div>
 			</div>
 		</div>
 	</script>
@@ -142,7 +145,7 @@
 	</script>
 </head>
 <body>
-	<div id="search-options">
+	<div id="search-options" class="container">
 	</div>
 	
 	<div id="results" class="container">
